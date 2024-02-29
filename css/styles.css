@@ -1,0 +1,27 @@
+ul,
+ol {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.container {
+    max-width: 1440px;
+    background: #fff;
+    padding: 24px 156px;
+}
+
+.gallery {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+
+.gallery-image {
+    width: 360px;
+height: 200px;
+}
+
