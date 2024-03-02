@@ -47,52 +47,45 @@ const images = [
   },
 ];
 
-const galleryContainer = document.querySelector('.gallery');
-let galleryMarkup = '';
+// Створення розмітки елементів галереї
+const galleryList = document.querySelector('.gallery');
 
-images.forEach(image => {
-  galleryMarkup += `
-    <li class="gallery-item">
-      <a class="gallery-link" href="${image.original}">
-        <img
-          class="gallery-image"
-          src="${image.preview}"
-          data-source="${image.original}"
-          alt="${image.description}"
-        />
-      </a>
-    </li>
-  `;
-});
+const createGalleryItem = ({ preview, original, description }) => {
+    const galleryItem = document.createElement('li');
+    galleryItem.classList.add('gallery-item');
 
-galleryContainer.innerHTML = galleryMarkup;
+    const link = document.createElement('a');
+    link.classList.add('gallery-link');
+    link.href = original;
 
-const galleryLinks = document.querySelectorAll('.gallery-link');
+    const image = document.createElement('img');
+    image.classList.add('gallery-image');
+    image.src = preview;
+    image.dataset.source = original;
+    image.alt = description;
 
-galleryLinks.forEach(link => {
-  link.addEventListener('click', event => {
+    link.appendChild(image);
+    galleryItem.appendChild(link);
+
+    return galleryItem;
+};
+
+const galleryItems = images.map(createGalleryItem);
+galleryList.append(...galleryItems);
+
+// Додавання прослуховувача подій для відкриття модального вікна
+galleryList.addEventListener('click', event => {
     event.preventDefault();
-  });
+    if (event.target.nodeName !== 'IMG') {
+        return;
+    }
+
+    const instance = basicLightbox.create(`
+        <div class="modal">
+            <img src="${event.target.dataset.source}" alt="${event.target.alt}" width="1112" height="640" />
+        </div>
+    `);
+    
+    instance.show();
 });
 
-const galleryList = document.querySelector('ul.gallery');
-
-galleryList.addEventListener('click', onGalleryItemClick);
-
-function onGalleryItemClick(event) {
-  event.preventDefault();
-
-  const target = event.target;
-  const galleryLink = target.closest('.gallery-link');
-
-  if (!galleryLink) {
-    return;
-  }
-
-  const largeImageSrc = galleryLink.dataset.source;
-
-  const instance = basicLightbox.create(`
-    <img src="${largeImageSrc}" width="1112" height="640">
-  `);
-  instance.show();
-}
