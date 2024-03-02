@@ -92,7 +92,7 @@ function onGalleryItemClick(event) {
   const largeImageSrc = galleryLink.dataset.source;
 
   const instance = basicLightbox.create(`
-    <img src="${largeImageSrc}" width="800" height="600">
+    <img src="${largeImageSrc}" width="1112" height="640">
   `);
   instance.show();
 }
