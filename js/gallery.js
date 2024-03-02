@@ -47,15 +47,10 @@ const images = [
   },
 ];
 
-// Отримуємо посилання на контейнер галереї
 const galleryContainer = document.querySelector('.gallery');
-
-// Оголошуємо змінну для зберігання розмітки галереї
 let galleryMarkup = '';
 
-// Проходимося по кожному об'єкту з масиву images
 images.forEach(image => {
-  // Додаємо розмітку для кожного зображення до змінної galleryMarkup
   galleryMarkup += `
     <li class="gallery-item">
       <a class="gallery-link" href="${image.original}">
@@ -70,15 +65,34 @@ images.forEach(image => {
   `;
 });
 
-// Вставляємо згенеровану розмітку всередину контейнера галереї
 galleryContainer.innerHTML = galleryMarkup;
 
 const galleryLinks = document.querySelectorAll('.gallery-link');
 
 galleryLinks.forEach(link => {
   link.addEventListener('click', event => {
-    event.preventDefault(); // Відмінити стандартну дію посилання
-    // Тут можна виконати інші дії, які ви бажаєте виконати при кліку на посилання
+    event.preventDefault();
   });
 });
-  
+
+const galleryList = document.querySelector('ul.gallery');
+
+galleryList.addEventListener('click', onGalleryItemClick);
+
+function onGalleryItemClick(event) {
+  event.preventDefault();
+
+  const target = event.target;
+  const galleryLink = target.closest('.gallery-link');
+
+  if (!galleryLink) {
+    return;
+  }
+
+  const largeImageSrc = galleryLink.dataset.source;
+
+  const instance = basicLightbox.create(`
+    <img src="${largeImageSrc}" width="800" height="600">
+  `);
+  instance.show();
+}
