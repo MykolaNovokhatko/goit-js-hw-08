@@ -1,4 +1,3 @@
-
 const images = [
   {
     preview: 'https://cdn.pixabay.com/photo/2019/05/14/16/43/rchids-4202820__480.jpg',
@@ -47,45 +46,41 @@ const images = [
   },
 ];
 
-// Створення розмітки елементів галереї
-const galleryList = document.querySelector('.gallery');
+const container = document.querySelector('.gallery');
 
-const createGalleryItem = ({ preview, original, description }) => {
-    const galleryItem = document.createElement('li');
-    galleryItem.classList.add('gallery-item');
+function createMarkup(images) {
+  return images
+    .map(
+      image => `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${image.original}">
+        <img
+          class="gallery-image"
+          src="${image.preview}"
+          data-source="${image.original}"
+          alt="${image.description}"
+        />
+      </a>
+    </li>
+  `
+    )
+    .join('');
+}
 
-    const link = document.createElement('a');
-    link.classList.add('gallery-link');
-    link.href = original;
+container.insertAdjacentHTML('beforeend', createMarkup(images));
 
-    const image = document.createElement('img');
-    image.classList.add('gallery-image');
-    image.src = preview;
-    image.dataset.source = original;
-    image.alt = description;
-
-    link.appendChild(image);
-    galleryItem.appendChild(link);
-
-    return galleryItem;
-};
-
-const galleryItems = images.map(createGalleryItem);
-galleryList.append(...galleryItems);
-
-// Додавання прослуховувача подій для відкриття модального вікна
-galleryList.addEventListener('click', event => {
-    event.preventDefault();
-    if (event.target.nodeName !== 'IMG') {
-        return;
-    }
-
-    const instance = basicLightbox.create(`
-        <div class="modal">
-            <img src="${event.target.dataset.source}" alt="${event.target.alt}" width="1112" height="640" />
-        </div>
-    `);
-    
+document.querySelector('.gallery').addEventListener('click', function (event) {
+  event.preventDefault();
+  const galleryImage = event.target.closest('.gallery-image');
+  if (galleryImage) {
+    const selectedImageUrl = galleryImage.dataset.source;
+    const instance = basicLightbox.create(`<img src="${selectedImageUrl}">`);
     instance.show();
+    document.addEventListener('keydown', function closeModal(event) {
+      if (event.key === 'Escape') {
+        instance.close();
+        document.removeEventListener('keydown', closeModal);
+      }
+    });
+  }
 });
-
